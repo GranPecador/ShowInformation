@@ -46,14 +46,6 @@ public class MainActivity extends AppCompatActivity {
                         mAdapter.clear();
                     }
                     break;
-                case PARAM_NOT_CONNECT_TO_DB:
-                    mAdapter.clear();
-                    mAdapter.add("I can not connect to the database");
-                    break;
-                case PARAM_NOT_CONNECT_TO_INTERNET:
-                    mAdapter.clear();
-                    mAdapter.add("I can not connect to Internet");
-                    break;
             }
 
         }
@@ -79,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Intent intent = new Intent(this, InfoService.class);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        //bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override

@@ -49,7 +49,6 @@ public class InfoService extends Service {
                         if (mConnection == null) {
                             connectToMariaDB();
                         }
-                        getInfoFromDB(address);
                     }
                     if(!mServerSocket.isClosed()){
                         mServerSocket.close();}
@@ -68,6 +67,10 @@ public class InfoService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+//        if (mBinder == null){
+//            mBinder = new MyBinder();
+//        }
+//        return mBinder;
     }
 
     public class ServiceBinder extends Binder {
@@ -86,59 +89,9 @@ public class InfoService extends Service {
 
     private void connectToMariaDB() {
 
-        //Log.i(TAG, "Connect to MariaDB");
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        String url = "jdbc:mariadb://192.168.1.109/information_db";
-        String user = "root";
-        String pass = "dayoneday";
-        try {
-            mConnection = DriverManager.getConnection(url, user, pass);
-        } catch (SQLException e) {
             Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
             intent.putExtra(MainActivity.PARAM_MESSAGE, MainActivity.PARAM_NOT_CONNECT_TO_DB);
             sendBroadcast(intent);
-        }
     }
-
-    private void getInfoFromDB(String address) {
-        try {
-            PreparedStatement preparedStatement = mConnection.prepareStatement(
-                    "SELECT text_info FROM\n" +
-                            "information  INNER JOIN information_topics \n" +
-                            "ON information.information_id = information_topics.information_id\n" +
-                            "INNER JOIN persons_topics\n" +
-                            "ON  information_topics.topic_id = persons_topics.topic_id\n" +
-                            "WHERE  persons_topics.person_id IN\n" +
-                            "(SELECT DISTINCT persons_devices.person_id \n" +
-                            "from devices  \n" +
-                            "INNER JOIN persons_devices \n" +
-                            "ON persons_devices.device_id = devices.device_id\n" +
-                            "WHERE devices.address = ?)\n" +
-                            "AND\n" +
-                            "(information.time_frame_end >= NOW() \n" +
-                            "OR inform  ation.time_frame_end IS NULL);");
-            preparedStatement.setNString(1, address);
-            ResultSet rs = preparedStatement.executeQuery();
-
-            Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
-            intent.putExtra(MainActivity.PARAM_MESSAGE, MainActivity.PARAM_TIME);
-            sendBroadcast(intent);
-            while (rs.next()) {
-
-                final String info = rs.getString(1);
-                Intent mesIntent = new Intent(MainActivity.BROADCAST_ACTION);
-                mesIntent.putExtra(MainActivity.PARAM_MESSAGE, MainActivity.GET_INFO);
-                mesIntent.putExtra(MainActivity.PARAM_INFO, info);
-                sendBroadcast(mesIntent);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 }
