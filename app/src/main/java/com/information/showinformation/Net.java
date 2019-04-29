@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Net {
 
-    private Thread receiver;
+    private static Thread receiver;
     private DatagramSocket mDatagramSocket = null;
     private int mPort = 6334;
     private String message;
@@ -21,7 +23,7 @@ public class Net {
         }
     }
 
-    public String receive(){
+    public void receive(){
         receiver = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -38,6 +40,6 @@ public class Net {
             }
         });
         receiver.start();
-        return message;
+        //return message;
     }
 }

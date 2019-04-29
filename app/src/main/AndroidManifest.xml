@@ -21,7 +21,7 @@
         </activity>
 
         <service
-            android:name=".InfoService"
+            android:name=".ShowInfoService"
             android:enabled="true"
             android:exported="false"></service>
     </application>
