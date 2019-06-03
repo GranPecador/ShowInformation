@@ -19,10 +19,15 @@ import static com.information.showinformation.MainActivity.BROADCAST_ACTION;
 public class ReceiverUdpRunnable implements Runnable {
 
     private boolean isReceive = true;
-    private int port = 9989;
+    private int port = 13052;
     private DatagramSocket mReceiveSocket;
     private DatagramPacket mReceivePacket;
-    private byte[] buff = new byte[1024];
+    private byte[] buff = new byte[2000];
+    private Context context;
+
+    public ReceiverUdpRunnable(Context context){
+        this.context = context;
+    }
 
     @Override
     public void run() {
@@ -30,7 +35,6 @@ public class ReceiverUdpRunnable implements Runnable {
         closeUdpReceiveData();
         try {
             mReceiveSocket = new DatagramSocket(port);
-
             Log.e("DatagramSocket", "new DatagramSocket port: "+ mReceiveSocket.getPort()+ " exect: "+ mReceiveSocket.getLocalPort());
 
         } catch (SocketException e) {
@@ -46,11 +50,10 @@ public class ReceiverUdpRunnable implements Runnable {
                 Log.e("DatagramSocket", "receive");
 
                 String result = new String(mReceivePacket.getData(), mReceivePacket.getOffset(), mReceivePacket.getLength());
-                result = "dfjgkdfkgjkfdjgkfjd";
                 Log.e("Udp", "dfjgkdfkgjkfdjgkfjd");
-                Intent sendMessage = new Intent(BROADCAST_ACTION);
+                Intent sendMessage = new Intent("receive_message");
                 sendMessage.putExtra("message", result);
-
+                LocalBroadcastManager.getInstance(context).sendBroadcast(sendMessage);
             } catch (IOException e) {
                 Log.e("run Socket error", e.getMessage());
                 continue;

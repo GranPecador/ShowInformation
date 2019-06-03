@@ -7,6 +7,12 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <fragment android:name="com.information.showinformation.ItemFragment"
+        android:id="@+id/listFr"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/info_recycler_view"
         android:layout_width="match_parent"
@@ -21,12 +27,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp" />
-        <TextView
-            android:id="@android:id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Turn on the bluetooth so that we notice you."
-            android:gravity="center"/>
+        android:layout_marginTop="8dp"
+        />
+
 
 </LinearLayout>

@@ -51,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String messag = intent.getStringExtra("message");
             System.out.print(messag+"////////////////////////////////////////////Main");
-
-            mAdapter.add(messag);
-            String message = intent.getStringExtra(PARAM_MESSAGE);
+            if (messag.equals("clear")){
+                mAdapter.clear();
+            }else {
+                mAdapter.add(messag);
+            }    String message = intent.getStringExtra(PARAM_MESSAGE);
 
             switch (message){
                 case GET_INFO:
@@ -106,8 +108,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mInfoList = findViewById(R.id.info_view);
+
         mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         mInfoList.setAdapter(mAdapter);
+
 
         IntentFilter mesIntentFilter = new IntentFilter(BROADCAST_ACTION);
         registerReceiver(mBroadcastReceiver, mesIntentFilter);
@@ -117,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
         mInfoRecyclerList.setLayoutManager(mLayoutManager);
         mInfoRecyclerList.setAdapter(null);
     }
-
 
 
     @Override

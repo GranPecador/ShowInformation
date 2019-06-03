@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,7 +30,9 @@ public class ShowInfoService extends Service {
     private ExecutorService mExecutorService = Executors.newCachedThreadPool();
     private Future longRunningTaskFuture;
     protected RecyclerView mRecyclerView;
+    private InformationAdapter mInfoAdapter;
     Context context = this;
+    private Integer currentNumber = 0;
 
     ReceiverUdpRunnable mUdpSocket;
 
@@ -45,10 +48,20 @@ public class ShowInfoService extends Service {
     };
 
     private void parseMessage(String message) {
-
-        System.out.print(message+"////////////////////////////////////////////");
-
-
+        Log.e("message", message);
+        String[] mesDer = message.split("#");
+        Integer num = Integer.parseInt(mesDer[0]);
+        if(num>currentNumber) {
+            currentNumber = num;
+            //mInfoAdapter.clear();
+            Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
+            intent.putExtra("message", "clear");
+            sendBroadcast(intent);
+        }
+        mInfoAdapter.addItem(new InformationModel(mesDer[1]));
+        Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
+        intent.putExtra("message", mesDer[1]);
+        sendBroadcast(intent);
     }
 
     public ShowInfoService() {
@@ -59,21 +72,22 @@ public class ShowInfoService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.e("service", "onCreate()");
-        registerReceiver(mReceiveMessagesFromServer, new IntentFilter("receive_message"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiveMessagesFromServer, new IntentFilter("receive_message"));
 
-        mUdpSocket = new ReceiverUdpRunnable();
+        mInfoAdapter = new InformationAdapter();
+
+        mUdpSocket = new ReceiverUdpRunnable(this);
         longRunningTaskFuture = mExecutorService.submit(mUdpSocket);
-
-        Context context = getApplicationContext();
 
         Intent intent = new Intent(MainActivity.BROADCAST_ACTION);
         intent.putExtra("message", "receive Message from service");
-        sendBroadcast(intent);
+        //sendBroadcast(intent);
     }
 
     public void setRecyclerView(RecyclerView mRecyclerView) {
         this.mRecyclerView = mRecyclerView;
-        new ShowMessages(this.mRecyclerView).execute();
+        mRecyclerView.setAdapter(mInfoAdapter);
+        //new ShowMessages(this.mRecyclerView).execute();
     }
 
     @Override
@@ -89,7 +103,7 @@ public class ShowInfoService extends Service {
         }
     }
 
-    protected static class ShowMessages extends AsyncTask<Void, Void, Void> {
+    protected static class ShowMessages extends AsyncTask<Void, String, Void> {
 
         private InformationAdapter mInfoAdapter;
         private WeakReference<RecyclerView> mRecyclerReference;
@@ -117,21 +131,21 @@ public class ShowInfoService extends Service {
         @Override
         protected Void doInBackground(Void... voids) {
             Log.e("Service","service doBackground()");
-
+            publishProgress("onProgressUpdate");
             return null;
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
+        protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            mInfoAdapter.addItem(new InformationModel("onProgressUpdate"));
+            mInfoAdapter.addItem(new InformationModel(values[0]));
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiveMessagesFromServer);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiveMessagesFromServer);
         Log.e("service", "onDestroy");
         mUdpSocket.setEndReceive();
         longRunningTaskFuture.cancel(true);

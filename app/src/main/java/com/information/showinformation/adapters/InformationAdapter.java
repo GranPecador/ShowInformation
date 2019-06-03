@@ -3,6 +3,7 @@ package com.information.showinformation.adapters;
 import android.support.annotation.NonNull;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,12 @@ public class InformationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private List<InformationModel> mInfoList = new ArrayList<InformationModel>();
 
     public void addItem(InformationModel item){
+        if (!mInfoList.contains(item))
         mInfoList.add(item);
+    }
+
+    public void clear(){
+        mInfoList.clear();
     }
 
     @NonNull
@@ -27,6 +33,7 @@ public class InformationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View itemView = layoutInflater.inflate(R.layout.list_row, parent, false);
+        Log.e("TAGGGGGGG", "ggggggggggggggggggggggggggggggggggggggg");
         return new InfoViewHolder(itemView);
 
     }
