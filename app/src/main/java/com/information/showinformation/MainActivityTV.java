@@ -16,15 +16,22 @@ package com.information.showinformation;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
-/*
- * Main Activity class that loads {@link MainFragment}.
- */
-public class MainActivityTV extends FragmentActivity {
+import com.information.showinformation.models.InformationModel;
+
+
+public class MainActivityTV extends FragmentActivity
+                        implements ItemFragment.OnListFragmentInteractionListener{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tv);
+    }
+
+    @Override
+    public void onListFragmentInteraction(InformationModel item) {
+        Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show();
     }
 }

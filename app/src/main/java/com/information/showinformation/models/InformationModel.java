@@ -1,21 +1,19 @@
 package com.information.showinformation.models;
 
-import java.sql.Date;
-
 public class InformationModel {
     private String text = "";
-    private Date startDate = null;
-    private Date endDate = null;
+    private String startString = "";
+    private String endString = "";
 
-    public InformationModel(String text, Date startDate, Date endDate){
+    public InformationModel(String text, String startString, String endString){
         this.text = text;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startString = startString;
+        this.endString = endString;
     }
 
-    public InformationModel(String text, Date endDate){
+    public InformationModel(String text, String endString){
         this.text = text;
-        this.endDate = endDate;
+        this.endString = endString;
     }
 
     public InformationModel(String text){
@@ -26,12 +24,12 @@ public class InformationModel {
         return text;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public String getEndString() {
+        return endString;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public String getStartString() {
+        return startString;
     }
 
 

@@ -10,6 +10,7 @@ import android.util.TimeFormatException;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -34,6 +35,7 @@ public class ReceiverUdpRunnable implements Runnable {
         Log.e("Run", "next step while");
         closeUdpReceiveData();
         try {
+
             mReceiveSocket = new DatagramSocket(port);
             Log.e("DatagramSocket", "new DatagramSocket port: "+ mReceiveSocket.getPort()+ " exect: "+ mReceiveSocket.getLocalPort());
 

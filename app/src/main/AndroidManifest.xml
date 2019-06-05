@@ -44,6 +44,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:configChanges="keyboard|keyboardHidden|navigation">
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize">
@@ -61,11 +62,9 @@
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
-
         <service
             android:name=".ShowInfoService"
             android:enabled="true"

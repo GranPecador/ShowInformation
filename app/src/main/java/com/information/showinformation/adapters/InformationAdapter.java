@@ -1,72 +1,90 @@
 package com.information.showinformation.adapters;
 
-import android.support.annotation.NonNull;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.information.showinformation.ItemFragment.OnListFragmentInteractionListener;
 import com.information.showinformation.R;
 import com.information.showinformation.models.InformationModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InformationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+/**
+ * {@link RecyclerView.Adapter} that can display a {@link InformationModel} and makes a call to the
+ * specified {@link OnListFragmentInteractionListener}.
+ * TODO: Replace the implementation with code for your data type.
+ */
+public class InformationAdapter extends RecyclerView.Adapter<InformationAdapter.ViewHolder> {
 
-    private List<InformationModel> mInfoList = new ArrayList<InformationModel>();
+    private final List<InformationModel> mValues;
+    private final OnListFragmentInteractionListener mListener;
 
-    public void addItem(InformationModel item){
-        if (!mInfoList.contains(item))
-        mInfoList.add(item);
+    public InformationAdapter(OnListFragmentInteractionListener listener) {
+        mValues = new ArrayList<>();
+        mListener = listener;
     }
 
-    public void clear(){
-        mInfoList.clear();
+    public void addItem(String info){
+        mValues.add((new InformationModel(info)));
     }
 
-    @NonNull
+    public void clearAll(){
+        mValues.clear();
+    }
+
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View itemView = layoutInflater.inflate(R.layout.list_row, parent, false);
-        Log.e("TAGGGGGGG", "ggggggggggggggggggggggggggggggggggggggg");
-        return new InfoViewHolder(itemView);
-
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.fragment_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        if (viewHolder instanceof InfoViewHolder)
-            ((InfoViewHolder) viewHolder).bind(mInfoList.get(position));
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        holder.mItem = mValues.get(position);
+        holder.infoTextItem.setText(mValues.get(position).getText());
+        holder.startActiveItem.setText(mValues.get(position).getStartString());
+        holder.endActiveItem.setText(mValues.get(position).getEndString());
+
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListFragmentInteraction(holder.mItem);
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return mInfoList.size();
+        return mValues.size();
     }
 
-    class InfoViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final View mView;
+        public TextView infoTextItem;
+        public TextView startActiveItem;
+        public TextView endActiveItem;
+        public InformationModel mItem;
 
-        private TextView infoTextItem;
-        private TextView startActiveItem;
-        private TextView endActiveItem;
-
-        public InfoViewHolder(@NonNull View itemView) {
-            super(itemView);
-            infoTextItem = itemView.findViewById(R.id.info_text_item);
-            startActiveItem = itemView.findViewById(R.id.date_from_item);
-            endActiveItem = itemView.findViewById(R.id.date_to_item);
+        public ViewHolder(View view) {
+            super(view);
+            mView = view;
+            infoTextItem = mView.findViewById(R.id.info_text_item);
+            startActiveItem = mView.findViewById(R.id.date_from_item);
+            endActiveItem = mView.findViewById(R.id.date_to_item);
         }
 
-        public void bind(InformationModel raw) {
-            infoTextItem.setText(raw.getText());
-            startActiveItem.setText(raw.getStartDate()==null?"":raw.getStartDate().toString());
-            endActiveItem.setText(raw.getEndDate()==null?"":raw.getEndDate().toString());
+        @Override
+        public String toString() {
+            return super.toString() + " '" + infoTextItem.getText() + "'";
         }
-
     }
 }
